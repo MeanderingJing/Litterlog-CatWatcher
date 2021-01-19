@@ -74,12 +74,12 @@ def cat_toilet_record():
 		for detection in detections:
 			if net.GetClassDesc(detection.ClassID) == "cat":
 				target = "cat"
-		if target == "cat" && count != 0:
+		if target == "cat" and count != 0:
 			count = 0                 # set count to 0 if cat shows up again within 10 secs. 
-		elif target != "cat" && count <= 10:
+		elif target != "cat" and count <= 10:
 			count += 1
 			print("Emma, count is:", count)
-		elif target != "cat" && count > 10:
+		elif target != "cat" and count > 10:
 			cat_left_time = time.time()-10   # minus 10 secs because cat left 10 secs ago
 			toilet_duration = time.strftime("%H:%M:%S", time.gmtime(cat_left_time - showup_time_epoch))
 			email_alert(cat_left_time,toilet_duration)
