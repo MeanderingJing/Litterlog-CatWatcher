@@ -81,11 +81,12 @@ def cat_toilet_record():
 				print("Emma, count is:", count)
 			else:
 				cat_left_time = time.time()-10   # minus 10 secs because cat left 10 secs ago
+				email_alert(cat_left_time,toilet_duration)
+				cat_left_time_regular = time.strftime("%H:%M:%S", time.localtime(cat_left_time))
 				toilet_duration = time.strftime("%H:%M:%S", time.gmtime(cat_left_time - showup_time_epoch))
 				with open('cat-toilet.csv', 'a', newline = '') as f:
 					theWriter = csv.writer(f)
-					theWriter.writerow([dateOftheDay, showup_time_reg, cat_left_time, toilet_duration])	   
-				email_alert(cat_left_time,toilet_duration)
+					theWriter.writerow([dateOftheDay, showup_time_reg, cat_left_time_regular, toilet_duration])	   
 				cat_toilet_record()
 		else:
 			count = 0                 # set count to 0 if cat shows up again within 10 secs. 
