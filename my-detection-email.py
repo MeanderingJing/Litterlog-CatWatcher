@@ -1,17 +1,18 @@
 
 # real-time object detection program from a live camera feed
-# Dec.16, 2020  tst run successfully
+# 
 # copied code from <Hello AI World NVDIA JETSON>
 
 import jetson.inference
 import jetson.utils
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import time
 import smtplib, ssl
 import csv
+from pathlib import Path
+import boto3
 
 def email_alert(t, duration):
-
 	port = 465
 	context = ssl.create_default_context()
 	sender_email = "emma.lijing0723@gmail.com"
@@ -38,7 +39,6 @@ def email_alert(t, duration):
 		server.login("emma.lijing0723@gmail.com", "Phantom31")
 		server.sendmail(sender_email, receiver_email, message)
 
-
 def cat_toilet_record():
 	count = 0
  # Emma: get variables for when cat shows up(showup_time_reg and showup_time_epoch) and send email alert
@@ -56,14 +56,13 @@ def cat_toilet_record():
 			if net.GetClassDesc(detection.ClassID) == "cat":
 				print("Yay! It's a cat!")
 				target = "cat"
-				dateOftheDay = date.today().strftime("%m/%d/%Y")
 				showup_time_reg = datetime.now().strftime("%H:%M:%S")
 				showup_time_epoch = time.time()
 		if target == "cat":
 			email_alert(showup_time_reg, 0)
 			break
-			
-			
+
+# Emma: Did another loop because you don't want to run the show_up_time code again. Next we need to get depart time. Feb.5, 2021 					
 	while display.IsStreaming():
 		target = ""
 		img = camera.Capture()
@@ -84,14 +83,32 @@ def cat_toilet_record():
 				cat_left_time_regular = time.strftime("%H:%M:%S", time.localtime(cat_left_time))
 				toilet_duration = time.strftime("%H:%M:%S", time.gmtime(cat_left_time - showup_time_epoch))
 				email_alert(cat_left_time,toilet_duration)
-				with open('cat-toilet.csv', 'a', newline = '') as f:
-					theWriter = csv.writer(f)
-					theWriter.writerow([dateOftheDay, showup_time_reg, cat_left_time_regular, toilet_duration])	   
+
+# edited Feb.5, 2021...create a separate csv file each day
+				dateOftheDay = date.today().strftime("%m-%d-%Y")
+				if not Path(dateOftheDay).is_file():          # to check whether the file already exists
+					with open(dateOftheDay, 'a', newline = '') as f:
+						theWriter = csv.writer(f)
+						theWriter.writerow(['Date', 'Entry', 'Depart', 'Duration'])
+						theWriter.writerow([dateOftheDay, showup_time_reg, cat_left_time_regular, toilet_duration])
+					yesterday = (date.today() - timedelta(days=1)).strftime("%m-%d-%Y")
+
+				# upload user's data under their user name into AWS S3 bucket <cat-folder>   2/10/21
+					if Path(yesterday).is_file():
+						s3 = boto3.resource('s3')
+						s3.Object('cat-folder', user/yesterday).upload_file(yesterday)
+				else:
+					with open(dateOftheDay, 'a', newline = '') as f:
+						theWriter = csv.writer(f)
+						theWriter.writerow([dateOftheDay, showup_time_reg, cat_left_time_regular, toilet_duration])
+
 				cat_toilet_record()
 		else:
 			count = 0                 # set count to 0 if cat shows up again within 10 secs. 
 		time.sleep(1)
 		
+user = input('Enter a name for your user account: ')    # edited 2/10/21
+
 # create a detectnet object instance that loads the 91-class SSD-Mobilenet-v2 model
 net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)   # model string and threshold value can be different
 
@@ -100,9 +117,5 @@ camera = jetson.utils.videoSource("csi://0")
 
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")  # "my_video.mp4" for file
-
-with open('cat-toilet.csv', 'a', newline = '') as f:   # Python creating csv file
-	theWriter = csv.writer(f)
-	theWriter.writerow(['Date', 'Entry', 'Depart', 'Duration'])
+	
 cat_toilet_record()  # call the above function
-
