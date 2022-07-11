@@ -118,14 +118,14 @@ def cat_watcher(username):
         if cat_is_here is False:
             if entry_timestamp_epoch != None:
                 # If cat is not present for more than 10 seconds, the program determines that the cat has left the litter box
-                if cat_absent_duration_second <= 10:
+                if cat_absent_duration_second <= 15:
                     cat_absent_duration_second += 1
                     logger.info(
                         f"Emma, your cat has not been seen in the litterbox for {cat_absent_duration_second} seconds."
                     )
                 else:
                     # Record the time when the cat left the litterbox
-                    depart_timestamp_epoch = time.time() - 10
+                    depart_timestamp_epoch = time.time() - 15
                     depart_timestamp_readable = time.ctime(depart_timestamp_epoch)
                     # Record the amount of time that cat used the litterbox
                     toilet_duration = time.strftime(
