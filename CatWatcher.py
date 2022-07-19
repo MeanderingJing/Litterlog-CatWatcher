@@ -154,7 +154,7 @@ def cat_watcher(username):
                 # Send email alert of cat showing up at litterbox
                 # email_alert(entry_timestamp_readable, 0)
             else:
-                if -1 < cat_absent_duration_second < 11:
+                if -1 < cat_absent_duration_second < 16:
                     # Set cat_absent_duration_second to 0 if cat shows up again within 10 secs.
                     cat_absent_duration_second = 0
                 else:
