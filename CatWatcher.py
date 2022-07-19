@@ -12,6 +12,7 @@ from pathlib import Path
 import logging
 import os
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
@@ -60,16 +61,17 @@ def email_alert(time, duration):
 
 
 def _record_data_in_csv(
-    username, entry_timestamp_readable, depart_timestamp_readable, toilet_duration
+    username, Id, entry_timestamp_readable, depart_timestamp_readable, toilet_duration
 ):
     """
-    Record time data to csv file, the only one
+    Record time data to csv file (the only one)
     :param username: the username entered by the user
     :param entry_timestamp_readable: the time when the cat enters the litterbox
     :param depart_timestamp_readable: the time when the cat departs the litterbox
     :param toilet_duration: the duration of the cat at the litterbox
     """
-    date_of_the_day = date.today().strftime("%m-%d-%Y")
+    # date_of_the_day = date.today().strftime("%m-%d-%Y")
+    date_of_the_day = date.today()
     path_to_csvfile = f"/home/jetson-inference/CatWatcher/output/{username}"
 
     # Open or create the csv file
@@ -77,9 +79,10 @@ def _record_data_in_csv(
         theWriter = csv.writer(f)
         # The file is empty
         if os.stat(path_to_csvfile).st_size == 0:
-            theWriter.writerow(["Datetime", "Entry", "Depart", "Duration"])
+            theWriter.writerow(["Id", "Datetime", "Entry", "Depart", "Duration"])
         theWriter.writerow(
             [
+                Id,
                 date_of_the_day,
                 entry_timestamp_readable,
                 depart_timestamp_readable,
@@ -126,19 +129,20 @@ def cat_watcher(username):
                 else:
                     # Record the time when the cat left the litterbox
                     depart_timestamp_epoch = time.time() - 15
-                    depart_timestamp_readable = time.ctime(depart_timestamp_epoch)
                     # Record the amount of time that cat used the litterbox
-                    toilet_duration = time.strftime(
-                        "%H:%M:%S",
-                        time.gmtime(depart_timestamp_epoch - entry_timestamp_epoch),
-                    )
+                    # toilet_duration_readable = time.strftime(
+                    #    "%H:%M:%S",
+                    #    time.gmtime(depart_timestamp_epoch - entry_timestamp_epoch),
+                    # )
+                    toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
                     # Send email alert of cat leaving the litterbox
-                    #email_alert(depart_timestamp_readable, toilet_duration)
-
+                    # email_alert(depart_timestamp_readable, toilet_duration)
+                    Id = +1
                     _record_data_in_csv(
                         username,
-                        entry_timestamp_readable,
-                        depart_timestamp_readable,
+                        Id,
+                        entry_timestamp_epoch,
+                        depart_timestamp_epoch,
                         toilet_duration,
                     )
                     # Recall the function itself
@@ -147,9 +151,8 @@ def cat_watcher(username):
             # Record the time when cat first shows up
             if entry_timestamp_epoch == None:
                 entry_timestamp_epoch = time.time()
-                entry_timestamp_readable = time.ctime(entry_timestamp_epoch)
                 # Send email alert of cat showing up at litterbox
-                #email_alert(entry_timestamp_readable, 0)
+                # email_alert(entry_timestamp_readable, 0)
             else:
                 if -1 < cat_absent_duration_second < 11:
                     # Set cat_absent_duration_second to 0 if cat shows up again within 10 secs.
@@ -163,6 +166,7 @@ def cat_watcher(username):
 
 # This information can be used to cr
 username = input("Enter a name for your user account: ")
+Id = 0
 
 # create a detectnet object instance that loads the 91-class SSD-Mobilenet-v2 model
 # model string and threshold value can be different
@@ -172,6 +176,6 @@ net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
 camera = jetson.utils.videoSource("csi://0")
 
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
-display = jetson.utils.videoOutput("display://0")  
+display = jetson.utils.videoOutput("display://0")
 
 cat_watcher(username)  # call the above function
