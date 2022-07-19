@@ -72,7 +72,7 @@ def _record_data_in_csv(
     """
     # date_of_the_day = date.today().strftime("%m-%d-%Y")
     date_of_the_day = date.today()
-    path_to_csvfile = f"/home/emma_dev22/jetson-inference/CatWatcher/output/{username}"
+    path_to_csvfile = f"/home/emma_dev22/CatWatcher/output/{username}"
 
     # Open or create the csv file
     with open(path_to_csvfile, "a", newline="") as f:
