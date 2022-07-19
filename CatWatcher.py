@@ -91,7 +91,7 @@ def _record_data_in_csv(
         )
 
 
-def cat_watcher(username):
+def cat_watcher(username, Id):
     """
     A camera is constantly monitoring at the litterbox to see if the cat shows up.
     Notifications will be sent to the user whenever the cat shows up or leaves the litterbox.
@@ -146,7 +146,7 @@ def cat_watcher(username):
                         toilet_duration,
                     )
                     # Recall the function itself
-                    cat_watcher(username)
+                    cat_watcher(username, Id)
         else:
             # Record the time when cat first shows up
             if entry_timestamp_epoch == None:
@@ -178,4 +178,4 @@ camera = jetson.utils.videoSource("csi://0")
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")
 
-cat_watcher(username)  # call the above function
+cat_watcher(username, Id)  # call the above function
