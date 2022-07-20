@@ -19,10 +19,8 @@ Base = declarative_base()
 class CatData(Base):
     __tablename__ = "cat_data"
     # __table__args__ = {"schema":"cat_tech_database"}  I saw this line here: https://www.youtube.com/watch?v=oNky1SUC5Ak
-    id = Column(Integer, primary_key=True)
+    Id = Column(Integer, primary_key=True)
     Datetime = Column(Date)  # May change the column name to Date in the csv later
     Entry = Column(DateTime)
     Depart = Column(DateTime)
-    Duration = Column(
-        Float
-    )  # Not sure what the datatype for this one is. Check the CatWatcher program to determine
+    Duration = Column(Float)

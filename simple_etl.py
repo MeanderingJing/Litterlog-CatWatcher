@@ -1,4 +1,10 @@
 import logging
+from pathlib import Path
+import uuid
+import pandas as pd
+from .config import DATABASE_URL
+
+filepath = "/home/emma_dev22/CatWatcher/output/{username}"  # to modify
 
 LOGGER = logging.getLogger("ETL")
 LOGGER.setLevel(logging.INFO)
@@ -35,9 +41,9 @@ def pipeline_data(filepath: Path):
     LOGGER.info(f"Starting ETL pipeline {pipeline_run_id} for file {filepath}")
 
     try:
-        data = extract_test_data(filepath, pipeline_run_id)
-        tpd = transform_test_data(data, pipeline_run_id)
-        load_test_data(tpd, pipeline_run_id)
+        cat_data = extract_test_data(filepath, pipeline_run_id)
+        transform_test_data(cat_data, pipeline_run_id)  # Place holder
+        load_test_data(cat_data, pipeline_run_id)
     except sqlalchemy.exc.IntegrityError as e:
         LOGGER.error(f"ETL pipeline {pipeline_run_id} Encountered IntegrityError {e}")
         if "duplicate key value violates unique constraint" in str(e):
@@ -56,35 +62,58 @@ def pipeline_data(filepath: Path):
     LOGGER.info(f"ETL pipeline {pipeline_run_id} complete")
 
 
-def extract_test_data(filepath: Path, pipeline_run_id: uuid.UUID) -> str:
+def extract_test_data(filepath: Path, pipeline_run_id: uuid.UUID) -> pd.DataFrame:
     """
     Extract
 
-    :Param filepath: A network-file-system(nfs) path containing data created from kernels-automated-test-system (kats)
+    :Param filepath: A network-file-system(nfs) path containing data created from CatWatcher
 
-    Returns file contents from read (str)
+    Returns file contents from read (pd.core.frame.DataFrame)
     """
     LOGGER.info(
         f"ETL pipeline {pipeline_run_id} - Extracting contents of test file {filepath}"
     )
-    file_contents = ""
-    with filepath.open("r") as f:
-        file_contents = f.read()
-    return file_contents
+    cat_data = pd.read_csv(filepath)
+    return cat_data
 
 
-def transform_test_data(
-    data: str, pipeline_run_id: uuid.UUID
-) -> Tuple[TestPlanData, List[Tuple[str, str]]]:
+def transform_test_data(cat_data: str, pipeline_run_id: uuid.UUID) -> pd.DataFrame:
     """
-    Convert string to
+    Place holder. We don't need to transform our data at the moment
 
     :Param data: string with cat bathroom data to transform
 
     Returns
-    Tuple[TestPlanData, List[Tuple[str, str]]]
+
     """
     LOGGER.info(
         f"ETL pipeline {pipeline_run_id} - Transforming json data into TestPlanData"
     )
-    return TestPlanData.from_json(data)
+    pass
+
+
+def load_test_data(cat_data: pd.DataFrame, pipeline_run_id: uuid.UUID):
+    """
+    Load cat_data into database at DATABASE_URL
+
+    Parameters
+    """
+    LOGGER.info(f"ETL pipeline {pipeline_run_id} - Loading TestPlanData to database")
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy import (
+        create_engine,
+    )
+
+    cat_schema_engine = create_engine(DATABASE_URL)
+
+    LOGGER.info(f"ETL pipeline {pipeline_run_id} - Beginning database session")
+    try:
+        cat_data.to_sql(
+            "csv", cat_schema_engine, if_exists="append", index=False
+        )  # to understand the detail
+    except:
+        print("Some error has occured")
+    finally:
+        # Close the engine
+        cat_schema_engine.dispose()
+    LOGGER.info(f"ETL pipeline {pipeline_run_id} - Loading cat_data complete")
