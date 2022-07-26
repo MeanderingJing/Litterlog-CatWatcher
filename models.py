@@ -12,7 +12,13 @@ from sqlalchemy import (
     Table,
     Date,
 )
+from sqlalchemy import create_engine
 
+# from .config import DATABASE_URL
+
+DATABASE_URL = (
+    "postgresql+psycopg2://emma_dev:emma_dev@192.168.1.157:5432/cat_tech_database"
+)
 Base = declarative_base()
 
 # Create CatData class with table name cat_data. This is the table name that will show up in Postges.
@@ -24,3 +30,9 @@ class CatData(Base):
     Entry = Column(DateTime)
     Depart = Column(DateTime)
     Duration = Column(Float)
+
+
+# Manually create the schema in the database
+engine = create_engine(DATABASE_URL)
+Base.metadata.create_all(engine)
+engine.dispose()
