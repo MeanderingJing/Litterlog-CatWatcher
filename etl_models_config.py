@@ -5,11 +5,16 @@ from typing import List
 import uuid
 import csv
 from datetime import datetime
-import glob
-import os
-from config import DATABASE_URL
-from models import CatData
-import sqlalchemy
+
+# Temp here for testing to create the table in the database with
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import (
+    create_engine,
+)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, DateTime, Float, Integer, Date
+
+# from .config import DATABASE_URL
 
 LOGGER = logging.getLogger("ETL")
 LOGGER.setLevel(logging.INFO)
@@ -33,34 +38,31 @@ LOGGER.addHandler(stream_handler)
 # file_handler.setFormatter(formatter)
 # LOGGER.addHandler(file_handler)
 
+Base = declarative_base()
 
-def file_watcher(watch_dir: Path):
-    """
-    Checks a given directory for any csv files and triggers a pipeline for the last modified file.
-    Assuming there could be multiple csv files in the output directory.
-    :Param: watch_dir : Path The directory to be monitored
-    """
-
-    LOGGER.info(f"globbing for existing files in {watch_dir}")
-
-    # Return a list of files that exist in watch_dir
-    watch_files = glob.glob(f"{watch_dir}/*")
-    ############
-    # more detail to be added if there is 0, 1, or more files........
-    ############
-    times = {}
-    for path in watch_files:
-        # getmtime: get last modified time
-        times[path] = os.path.getmtime(path)
-    # Find the file that was last modified
-    target_file = max(times, key=times.get)
-    # Get the absolute path of the last modified file
-    target_file_path = Path(target_file).absolute()
-    # Trigger the etl pipeline
-    pipeline_data(target_file_path)
+# Temperarily move here
+# Create CatData class with table name cat_data. This is the table name that will show up in Postges.
+class CatData(Base):
+    __tablename__ = "cat_data"
+    # __table__args__ = {"schema":"cat_tech_database"}  I saw this line here: https://www.youtube.com/watch?v=oNky1SUC5Ak
+    Id = Column(Integer, primary_key=True)
+    Datetime = Column(Date)  # May change the column name to Date in the csv later
+    Entry = Column(DateTime)
+    Depart = Column(DateTime)
+    Duration = Column(Float)
 
 
-def pipeline_data(filepath: Path):
+# Temp solution here for testing
+DATABASE_URL = (
+    "postgresql+psycopg2://emma_dev:emma_dev@192.168.1.157:5432/cat_tech_database"
+)
+
+cat_schema_engine = create_engine(DATABASE_URL)
+# Create the table defined by our mapped class
+Base.metadata.create_all(cat_schema_engine)  # added
+
+
+def pipeline_data(filepath: Path, cat_schema_engine):
     """
     Our extract-transform-load process(ETL)
 
@@ -70,9 +72,9 @@ def pipeline_data(filepath: Path):
     LOGGER.info(f"Starting ETL pipeline {pipeline_run_id} for file {filepath}")
 
     try:
-        extract_cat_data(filepath, pipeline_run_id)  # Place holder
-        cat_data = transform_cat_data(filepath, pipeline_run_id)
-        load_cat_data(cat_data, pipeline_run_id)
+        extract_test_data(filepath, pipeline_run_id)  # Place holder
+        cat_data = transform_test_data(filepath, pipeline_run_id)
+        load_test_data(cat_data, pipeline_run_id, cat_schema_engine)
     except sqlalchemy.exc.IntegrityError as e:
         LOGGER.error(f"ETL pipeline {pipeline_run_id} Encountered IntegrityError {e}")
         if "duplicate key value violates unique constraint" in str(e):
@@ -91,9 +93,11 @@ def pipeline_data(filepath: Path):
     LOGGER.info(f"ETL pipeline {pipeline_run_id} complete")
 
 
-def extract_cat_data(filepath: Path, pipeline_run_id: uuid.UUID) -> Path:
+def extract_test_data(filepath: Path, pipeline_run_id: uuid.UUID) -> csv.DictReader:
     """
-    pass for now.
+    Extract
+
+    pass for now
     """
     LOGGER.info(
         f"ETL pipeline {pipeline_run_id} - Extracting contents of file {filepath}"
@@ -101,13 +105,14 @@ def extract_cat_data(filepath: Path, pipeline_run_id: uuid.UUID) -> Path:
     return filepath
 
 
-def transform_cat_data(filepath: Path, pipeline_run_id: uuid.UUID) -> list:
+def transform_test_data(filepath: Path, pipeline_run_id: uuid.UUID) -> list:
     """
-    Extract the target csv data
-    Convert the data in each column into matching datatypes defined in models.py
-    :Param filepath: the path of the target file
+    Place holder. We don't need to transform our data at the moment
 
-    Returns a list of CatData objects
+    :Param data: string with cat bathroom data to transform
+
+    Returns
+
     """
     LOGGER.info(f"ETL pipeline {pipeline_run_id} - Transforming csv data into CatData.")
     with open(filepath, encoding="utf-8") as csv_file:
@@ -122,8 +127,7 @@ def transform_cat_data(filepath: Path, pipeline_run_id: uuid.UUID) -> list:
 def _from_orderedDict(row: OrderedDict) -> CatData:
     """
     Change data type to the ones that are defined in the models.py
-    :Param row: OrderedDict of a row from the csv data
-    Returns a CatData object
+
     """
     # Change OrderedDict to dict
     row = dict(row)
@@ -133,9 +137,10 @@ def _from_orderedDict(row: OrderedDict) -> CatData:
     return CatData(**row)
 
 
-def load_cat_data(
+def load_test_data(
     cat_data: List[CatData],
     pipeline_run_id: uuid.UUID,
+    cat_schema_engine,
 ):
     """
     Load cat_data into database at DATABASE_URL
@@ -145,12 +150,7 @@ def load_cat_data(
     LOGGER.info(f"ETL pipeline {pipeline_run_id} - Loading CatData to database")
 
     LOGGER.info(f"ETL pipeline {pipeline_run_id} - Beginning database session")
-    from sqlalchemy.orm import sessionmaker
-    from sqlalchemy import (
-        create_engine,
-    )
 
-    cat_schema_engine = create_engine(DATABASE_URL)
     Session = sessionmaker(bind=cat_schema_engine)
     s = Session()
     s.add_all(cat_data)
@@ -162,5 +162,5 @@ def load_cat_data(
     LOGGER.info(f"ETL pipeline {pipeline_run_id} - Loading cat_data complete")
 
 
-watch_dir = "/home/emma_dev22/CatWatcher/output/"  # to modify
-file_watcher(watch_dir)
+filepath = "/home/emma_dev22/CatWatcher/output/Atty20220719"  # to modify
+pipeline_data(filepath, cat_schema_engine)

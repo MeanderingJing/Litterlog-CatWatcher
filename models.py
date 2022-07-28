@@ -3,13 +3,9 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
     Column,
-    String,
     DateTime,
-    ForeignKey,
-    Boolean,
     Float,
     Integer,
-    Table,
     Date,
 )
 from sqlalchemy import create_engine
@@ -30,6 +26,8 @@ class CatData(Base):
     Entry = Column(DateTime)
     Depart = Column(DateTime)
     Duration = Column(Float)
+
+    ####### @validates may need to be added later on ##############
 
 
 # Manually create the schema in the database
