@@ -1,0 +1,4 @@
+sqlalchemy==1.4.39
+psycopg2==2.9.3
+alembic==1.8.1
+click==8.1.3
