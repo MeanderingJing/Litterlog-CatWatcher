@@ -3,7 +3,7 @@ from pathlib import Path
 
 import click
 
-from simple_etl import file_watcher
+from .simple_etl import file_watcher
 
 # click.command() decorator takes in the function test_data_watcher() and modify it so that it can be called from the command line
 # Emma20220713: Path(test_data_dir) aims to join the path to get the full path (my understanding, details to be confirmed)

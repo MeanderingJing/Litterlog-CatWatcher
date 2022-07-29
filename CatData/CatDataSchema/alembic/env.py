@@ -20,7 +20,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = None
 # Emma 20220729
-from models import (
+from CatDataSchema.models import (
     Base,
     CatData,
 )  # I assumed the import of Base should not work, but it seems to work

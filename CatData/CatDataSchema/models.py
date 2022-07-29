@@ -10,11 +10,11 @@ from sqlalchemy import (
 )
 from sqlalchemy import create_engine
 
-# from .config import DATABASE_URL
+from .config import DATABASE_URL
 
-DATABASE_URL = (
-    "postgresql+psycopg2://emma_dev:emma_dev@192.168.1.157:5432/cat_tech_database"
-)
+# DATABASE_URL = (
+#     "postgresql+psycopg2://emma_dev:emma_dev@192.168.1.157:5432/cat_tech_database"
+# )
 Base = declarative_base()
 
 # Create CatData class with table name cat_data. This is the table name that will show up in Postges.

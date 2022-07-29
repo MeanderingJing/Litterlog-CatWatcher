@@ -9,10 +9,10 @@ import glob
 import os
 
 # from CatDataSchema.config import DATABASE_URL
-from config import DATABASE_URL
+from .config import DATABASE_URL
 
 # from CatDataSchema.models import CatData
-from models import CatData
+from .models import CatData
 import sqlalchemy
 
 LOGGER = logging.getLogger("ETL")
