@@ -11,6 +11,7 @@ import csv
 from pathlib import Path
 import logging
 import os
+import uuid
 
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,12 @@ def email_alert(time, duration):
 
 
 def _record_data_in_csv(
-    username, Id, entry_timestamp_readable, depart_timestamp_readable, toilet_duration
+    username,
+    login_time,
+    Id,
+    entry_timestamp_readable,
+    depart_timestamp_readable,
+    toilet_duration,
 ):
     """
     Record time data to csv file (the only one)
@@ -72,7 +78,8 @@ def _record_data_in_csv(
     """
     # date_of_the_day = date.today().strftime("%m-%d-%Y")
     date_of_the_day = date.today()
-    path_to_csvfile = f"/home/emma_dev22/CatWatcher/output/{username}"
+    # Name of the csv file is the combination of the username and the
+    path_to_csvfile = f"/home/emma_dev22/CatWatcher/output/{username}+{login_time}"
 
     # Open or create the csv file
     with open(path_to_csvfile, "a", newline="") as f:
@@ -91,7 +98,7 @@ def _record_data_in_csv(
         )
 
 
-def cat_watcher(username, Id):
+def cat_watcher(username, Id, login_time):
     """
     A camera is constantly monitoring at the litterbox to see if the cat shows up.
     Notifications will be sent to the user whenever the cat shows up or leaves the litterbox.
@@ -140,6 +147,7 @@ def cat_watcher(username, Id):
                     Id += 1
                     _record_data_in_csv(
                         username,
+                        login_time,
                         Id,
                         entry_timestamp_epoch,
                         depart_timestamp_epoch,
@@ -164,9 +172,27 @@ def cat_watcher(username, Id):
         time.sleep(1)
 
 
+def csvfiles_recorder(username, login_time):
+    """
+    Create a csv file that has two columns: id and csv_file_name
+    """
+    id = uuid.uuid4()
+    # "/home/emma_dev22/CatWatcher/output/" should not be hardcoded. MOdify in the future
+    path_to_csvfiles_recorder = "/home/emma_dev22/CatWatcher/output/csvfiles_recorder"
+    with open(path_to_csvfiles_recorder, "a") as f:
+        theWriter = csv.writer(f)
+        # The file is empty
+        if os.stat(path_to_csvfiles_recorder).st_size == 0:
+            theWriter.writerow(["Id", "csv_file_name"])
+        theWriter.writerow([Id, username + login_time])
+
+
 # This information can be used to cr
 username = input("Enter a name for your user account: ")
 Id = 0
+# login_time will be used to create the name of the csv file that will be generated
+login_time = datetime.now().strftime("%Y%m%d_%H:%M:%S")
+csvfiles_recorder(username, login_time)
 
 # create a detectnet object instance that loads the 91-class SSD-Mobilenet-v2 model
 # model string and threshold value can be different
@@ -178,4 +204,4 @@ camera = jetson.utils.videoSource("csi://0")
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")
 
-cat_watcher(username, Id)  # call the above function
+cat_watcher(username, Id, login_time)  # call the above function
