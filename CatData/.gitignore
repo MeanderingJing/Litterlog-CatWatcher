@@ -1,7 +1,4 @@
 
-#Added by cargo
-# /target
-# kernel.willis/dist/*.whl
 
 #Added by python
 __pycache__
