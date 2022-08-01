@@ -14,7 +14,7 @@ def cat_data_watcher():
     """
     use watchdog to monitor the test data directory and fire our etl process
     """
-    cat_data_dir = environ.get("CAT_DATA_DMZ", "/home/cat_dev/cat_tech/cat_data_watcher_venv/CatWatcher/output")
+    cat_data_dir = environ.get("CAT_DATA_DMZ", "/home/cat_dev/cat_tech/cat_data_watcher_packaging_venv/CatWatcher/output")
     file_watcher(Path(cat_data_dir))
 
 

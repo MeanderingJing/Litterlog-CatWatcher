@@ -44,24 +44,24 @@ def file_watcher(watch_dir: Path):
     Assuming there could be multiple csv files in the output directory.
     :Param: watch_dir : Path The directory to be monitored
     """
+    while True:
+        LOGGER.info(f"globbing for existing files in {watch_dir}")
 
-    LOGGER.info(f"globbing for existing files in {watch_dir}")
-
-    # Return a list of files that exist in watch_dir
-    watch_files = glob.glob(f"{watch_dir}/*")
-    ############
-    # more detail to be added if there is 0, 1, or more files........
-    ############
-    times = {}
-    for path in watch_files:
-        # getmtime: get last modified time
-        times[path] = os.path.getmtime(path)
-    # Find the file that was last modified
-    target_file = max(times, key=times.get)
-    # Get the absolute path of the last modified file
-    target_file_path = Path(target_file).absolute()
-    # Trigger the etl pipeline
-    pipeline_data(target_file_path)
+        # Return a list of files that exist in watch_dir
+        watch_files = glob.glob(f"{watch_dir}/*")
+        ############
+        # more detail to be added if there is 0, 1, or more files........
+        ############
+        times = {}
+        for path in watch_files:
+            # getmtime: get last modified time
+            times[path] = os.path.getmtime(path)
+        # Find the file that was last modified
+        target_file = max(times, key=times.get)
+        # Get the absolute path of the last modified file
+        target_file_path = Path(target_file).absolute()
+        # Trigger the etl pipeline
+        pipeline_data(target_file_path)
 
 
 def pipeline_data(filepath: Path):
