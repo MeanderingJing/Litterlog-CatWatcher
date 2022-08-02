@@ -2,11 +2,15 @@ import logging
 from pathlib import Path
 from collections import OrderedDict
 from typing import List
+from unittest.mock import DEFAULT
 import uuid
 import csv
 from datetime import datetime
 import glob
 import os
+import time
+
+#from more_itertools import last
 
 # from CatDataSchema.config import DATABASE_URL
 from .config import DATABASE_URL
@@ -36,7 +40,7 @@ LOGGER.addHandler(stream_handler)
 # file_handler.setLevel(logging.INFO)
 # file_handler.setFormatter(formatter)
 # LOGGER.addHandler(file_handler)
-
+DIRECTORY_WATCH_SLEEP = 30
 
 def file_watcher(watch_dir: Path):
     """
@@ -44,6 +48,7 @@ def file_watcher(watch_dir: Path):
     Assuming there could be multiple csv files in the output directory.
     :Param: watch_dir : Path The directory to be monitored
     """
+    last_file_loaded = None
     while True:
         LOGGER.info(f"globbing for existing files in {watch_dir}")
 
@@ -58,10 +63,13 @@ def file_watcher(watch_dir: Path):
             times[path] = os.path.getmtime(path)
         # Find the file that was last modified
         target_file = max(times, key=times.get)
-        # Get the absolute path of the last modified file
-        target_file_path = Path(target_file).absolute()
-        # Trigger the etl pipeline
-        pipeline_data(target_file_path)
+        if target_file != last_file_loaded:
+            # Get the absolute path of the last modified file
+            target_file_path = Path(target_file).absolute()
+            # Trigger the etl pipeline
+            pipeline_data(target_file_path)
+            last_file_loaded = target_file
+        time.sleep(DIRECTORY_WATCH_SLEEP)
 
 
 def pipeline_data(filepath: Path):
@@ -129,11 +137,11 @@ def _from_orderedDict(row: OrderedDict) -> CatData:
     :Param row: OrderedDict of a row from the csv data
     Returns a CatData object
     """
-    # Change OrderedDict to dict
-    row = dict(row)
+    # Change OrderedDict to dict. Actually we shouldn't need it because we are using python 3.10
+    #row = dict(row)
     # Entry and Depart in the raw data need to be converted to datetime type
-    row["Entry"] = datetime.fromtimestamp(float(row["Entry"]))
-    row["Depart"] = datetime.fromtimestamp(float(row["Depart"]))
+    row["entry"] = datetime.fromtimestamp(float(row["entry"]))
+    row["depart"] = datetime.fromtimestamp(float(row["depart"]))
     return CatData(**row)
 
 

@@ -39,5 +39,5 @@ def migrate():
     upgrade(alembic_cfg, "head")
 
 
-cat_data_watcher()
-# migrate()
+#cat_data_watcher()
+#migrate()
