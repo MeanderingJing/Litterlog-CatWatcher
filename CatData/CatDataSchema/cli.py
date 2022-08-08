@@ -8,13 +8,13 @@ from .simple_etl import file_watcher
 # click.command() decorator takes in the function test_data_watcher() and modify it so that it can be called from the command line
 # Emma20220713: Path(test_data_dir) aims to join the path to get the full path (my understanding, details to be confirmed)
 
-# CAT_DATA_DMZ = "/home/emma_dev22/CatWatcher/output"   # This should be added as an Environment variable at some point or defined in docker files.
+# CAT_DATA_DMZ = "/var/nfs/cat_watcher_output" # An NFS directory in server  # This should be added as an Environment variable at some point or defined in docker files.
 @click.command()
 def cat_data_watcher():
     """
     use watchdog to monitor the test data directory and fire our etl process
     """
-    cat_data_dir = environ.get("CAT_DATA_DMZ", "/home/cat_dev/cat_tech/cat_data_watcher_packaging_venv/CatWatcher/output")
+    cat_data_dir = environ.get("CAT_DATA_DMZ", "/var/nfs/cat_watcher_output")
     file_watcher(Path(cat_data_dir))
 
 
