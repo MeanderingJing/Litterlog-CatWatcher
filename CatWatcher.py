@@ -81,7 +81,7 @@ def _record_data_in_csv(
     )
     # Name of the csv file is the combination of the username and the
     path_to_csvfile = (
-        f"/home/emma_dev22/CatWatcher/output/{username}{entry_timestamp_readable}"
+        f"/home/emma_dev22/cat_watcher_output/{username}{entry_timestamp_readable}"
     )
 
     # Open or create the csv file
