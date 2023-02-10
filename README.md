@@ -8,7 +8,7 @@ The program uses image recognition to monitor the cat and logs the data whenever
 
 ### Diagram of this program
 ![alt](https://github.com/emma-jinger/CatWatcher/blob/main/CatWatcher%20Program%20Diagram%20.png "Program Diagram")
-### What is output CSV file like?
+### Output CSV File
 ***Note: Currently, each time entry is recorded in its own CSV file.*** <br>
 The content of a sample file is shown as follows:
 ```
