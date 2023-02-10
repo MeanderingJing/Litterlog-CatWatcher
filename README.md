@@ -6,7 +6,9 @@ The program uses image recognition to monitor the cat and logs the data whenever
 - Upon cat leaving the sight of camera, an email notification is sent to user (optional, not activated now).
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
-
+### Diagram of this program
+[!alt]("")
+### What is output CSV file like?
 ***Note: Currently, each time entry is recorded in its own CSV file.*** <br>
 The content of a sample file is shown as follows:
 ```
@@ -15,6 +17,7 @@ date,entry,depart,duration
 ```
 - `date` is a `datetime.date()` object; `entry`, `depart`, and `duration` are `float`.
 - The data is going to be loaded to a Postgres database. Before being loaded, `entry` and `depart` should be transformed to `datetime.datetime()` data type.
+
 ## What is the setup like for this program?  
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
