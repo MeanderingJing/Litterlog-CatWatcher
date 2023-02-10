@@ -11,7 +11,7 @@ The program uses image recognition to monitor the cat and logs the data whenever
 date,entry,depart,duration
 2023-01-13,1673672546.8753567,1673672549.9890501,3.1136934757232666
 ```
-## What device do I use to run this program?  
+## What is the setup like for this program?  
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
