@@ -7,7 +7,7 @@ The program uses image recognition to monitor the cat and logs the data whenever
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
 ### Diagram of this program
-[!alt]("https://github.com/emma-jinger/CatWatcher/blob/main/CatWatcher%20Program%20Diagram%20.png")
+![alt]("https://github.com/emma-jinger/CatWatcher/blob/main/CatWatcher%20Program%20Diagram%20.png")
 ### What is output CSV file like?
 ***Note: Currently, each time entry is recorded in its own CSV file.*** <br>
 The content of a sample file is shown as follows:
