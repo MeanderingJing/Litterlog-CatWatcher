@@ -1,4 +1,8 @@
 # CatWatcher Program Edited on 20230210
+## Setup for the Program  
+**Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
+**Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
+
 ## What does this program do?
 The program uses image recognition to monitor the cat and logs the data whenever the cat uses the litterbox. To be more specific:
 - A camera is constantly running in front of a litterbox.
@@ -18,9 +22,6 @@ date,entry,depart,duration
 - `date` is a `datetime.date()` object; `entry`, `depart`, and `duration` are `float`.
 - The data is going to be loaded to a Postgres database. Before being loaded, `entry` and `depart` should be transformed to `datetime.datetime()` data type.
 
-## Setup for the Program  
-**Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
-**Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
 ## Possible Issues
 - The camera/machine learning program can not always recognize the cat, depending on how the cat positions himself in the litterbox. This leads to missing data on the cat's bathroom behavior.
