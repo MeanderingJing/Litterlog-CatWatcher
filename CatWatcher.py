@@ -50,7 +50,7 @@ def email_alert(time, duration):
 		Your cat left the litterbox at {time}.
 		He used the toilet for {duration}."""
 
-    # create a secure connection with Gmail's SMTP server.
+    # create a secure connection with Gmail's SMTP server
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         try:
             server.login(sender_email, "Jingdong1106!")
@@ -74,7 +74,6 @@ def _record_data_in_csv(
     :param depart_timestamp_readable: the time when the cat departs the litterbox
     :param toilet_duration: the duration of the cat at the litterbox
     """
-    # date_of_the_day = date.today().strftime("%m-%d-%Y")
     date_of_the_day = date.today()
     entry_timestamp_readable = datetime.fromtimestamp(entry_timestamp_epoch).strftime(
         "%Y%m%d_%H:%M:%S"
@@ -122,27 +121,24 @@ def cat_watcher(username):
         display.Render(img)
         display.SetStatus(f"Object Detection | Network {net.GetNetworkFPS()} FPS")
 
+        # 20230209: Check if a cat shows up in front of camera
         for detection in detections:
             if net.GetClassDesc(detection.ClassID) == "cat":
                 logger.info("Detected a cat!")
                 cat_is_here = True
 
+        # If cat is absent for more than MAX_ABSENT_TIME(15) seconds, the program determines that the cat has left the litter box
         if cat_is_here is False:
             if entry_timestamp_epoch != None:
-                # If cat is not present for more than 15 seconds, the program determines that the cat has left the litter box
-                if cat_absent_duration_second < 15:
+                if cat_absent_duration_second < MAX_ABSENT_TIME:
                     cat_absent_duration_second += 1
                     logger.info(
                         f"Emma, your cat has not been seen in the litterbox for {cat_absent_duration_second} seconds."
                     )
                 else:
                     # Record the time when the cat left the litterbox
-                    depart_timestamp_epoch = time.time() - 15
-                    # Record the amount of time that cat used the litterbox
-                    # toilet_duration_readable = time.strftime(
-                    #    "%H:%M:%S",
-                    #    time.gmtime(depart_timestamp_epoch - entry_timestamp_epoch),
-                    # )
+                    depart_timestamp_epoch = time.time() - MAX_ABSENT_TIME
+                    # Get the amount of time that cat used the litterbox
                     toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
                     # Send email alert of cat leaving the litterbox
                     # email_alert(depart_timestamp_readable, toilet_duration)
@@ -160,9 +156,10 @@ def cat_watcher(username):
                 entry_timestamp_epoch = time.time()
                 # Send email alert of cat showing up at litterbox
                 # email_alert(entry_timestamp_readable, 0)
+            # cat has showed up earlier
             else:
-                if -1 < cat_absent_duration_second < 16:
-                    # Set cat_absent_duration_second to 0 if cat shows up again within 10 secs.
+                if -1 < cat_absent_duration_second <= MAX_ABSENT_TIME:
+                    # Set cat_absent_duration_second to 0 if cat shows up again within MAX_ABSENT_TIME secs.
                     cat_absent_duration_second = 0
                 else:
                     logger.error(
@@ -171,6 +168,7 @@ def cat_watcher(username):
         time.sleep(1)
 
 
+MAX_ABSENT_TIME = 15
 username = input("Enter a name for your user account: ")
 # login_time will be used to create the name of the csv file that will be generated
 # login_time = datetime.now().strftime("%Y%m%d_%H:%M:%S")
