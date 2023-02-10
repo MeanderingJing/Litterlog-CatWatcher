@@ -6,9 +6,11 @@
 - Upon cat leaving the sight of camera, an email notification is sent to user (optional, not activated now).
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
-***Note: Currently, each time entry is recorded in its own csc file.*** The content of a sample file is shown as follows: 
+***Note: Currently, each time entry is recorded in its own csc file. The content of a sample file is shown as follows:***
 ```
 date,entry,depart,duration
 2023-01-13,1673672546.8753567,1673672549.9890501,3.1136934757232666
 ```
+## What device do I use to run this program?  
+A 
 
