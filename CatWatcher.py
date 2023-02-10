@@ -50,7 +50,7 @@ def email_alert(time, duration):
 		Your cat left the litterbox at {time}.
 		He used the toilet for {duration}."""
 
-    # create a secure connection with Gmail's SMTP server
+    # create a secure connection with Gmail's SMTP server.
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         try:
             server.login(sender_email, "Jingdong1106!")
