@@ -19,4 +19,8 @@ date,entry,depart,duration
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
-
+## Possible Issues
+- The camera/machine learning program can not always recognize the cat, depending on how the cat positions himself in the litterbox. This leads to missing data on the cat's bathroom behavior.
+- The Nano device crashes/dies for unknown reasons. It is possibly related to limited memory and processing power of the Nano device.
+## Future development
+- Make this program a service
