@@ -10,6 +10,9 @@ The program uses image recognition to monitor a cat's litterbox and logs the dat
 - Upon cat leaving the sight of camera, an email notification is sent to user (optional, not activated now).
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
+*Currently, to run the program, go to the directory where this repo is, and execute the command:*
+``` python3 CatWatcher.py```
+
 ### Diagram of this program
 ![alt](https://github.com/emma-jinger/CatWatcher/blob/main/CatWatcherProgramDiagram.png "Program Diagram")
 ### Output CSV File
@@ -28,3 +31,4 @@ date,entry,depart,duration
 - The Nano device crashes/dies for unknown reasons. It is possibly related to limited memory and processing power of the Nano device.
 ## Future development
 - Make this program a service
+- Fix the headless program executing issue
