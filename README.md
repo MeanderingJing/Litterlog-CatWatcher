@@ -4,7 +4,7 @@
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
 ## What does this program do?
-The program uses image recognition to monitor the cat and logs the data whenever the cat uses the litterbox. To be more specific:
+The program uses image recognition to monitor a cat's litterbox and logs the data whenever the cat uses the litterbox. To be more specific:
 - A camera is constantly running in front of a litterbox.
 - Upon a cat being caught on camera, an email notification is sent to user (optional, not activated now).
 - Upon cat leaving the sight of camera, an email notification is sent to user (optional, not activated now).
