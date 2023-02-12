@@ -32,5 +32,5 @@ date,entry,depart,duration
 - The camera/machine learning program can not always recognize the cat, depending on how the cat positions himself in the litterbox. This leads to missing data on the cat's bathroom behavior.
 - The Nano device crashes/dies for unknown reasons. It is possibly related to limited memory and processing power of the Nano device.
 ## Future development
-- Make this program a service
+- Make this program a service, and have a default username if none is supplied.
 - Fix the headless program executing issue
