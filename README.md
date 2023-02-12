@@ -10,8 +10,10 @@ The program uses image recognition to monitor a cat's litterbox and logs the dat
 - Upon cat leaving the sight of camera, an email notification is sent to user (optional, not activated now).
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
-*Currently, to run the program, go to the directory where this repo is, and execute the command:*
-``` python3 CatWatcher.py```
+Currently, to run the program, go to the directory where this repo is, and execute the command:
+``` 
+python3 CatWatcher.py
+```
 
 ### Diagram of this program
 ![alt](https://github.com/emma-jinger/CatWatcher/blob/main/CatWatcherProgramDiagram.png "Program Diagram")
