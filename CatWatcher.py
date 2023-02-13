@@ -105,6 +105,7 @@ def cat_watcher(username):
     Notifications will be sent to the user whenever the cat shows up or leaves the litterbox.
     Data of the times when cat shows up and leaves the litterbox is recorded in a csv file.
     """
+    MAX_ABSENT_TIME = 15
     cat_absent_duration_second = 0
     entry_timestamp_epoch = None
 
@@ -168,7 +169,6 @@ def cat_watcher(username):
         time.sleep(1)
 
 
-MAX_ABSENT_TIME = 15
 username = input("Enter a name for your user account: ")
 # login_time will be used to create the name of the csv file that will be generated
 # login_time = datetime.now().strftime("%Y%m%d_%H:%M:%S")
