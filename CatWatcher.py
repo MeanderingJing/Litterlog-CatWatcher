@@ -82,7 +82,7 @@ def _record_data_in_csv(
     path_to_csvfile = (
         f"/home/emma_dev22/cat_watcher_output/{username}{entry_timestamp_readable}"
     )
-
+    logger.info(f"The path of the csv file is {path_to_csvfile}")
     # Open or create the csv file
     with open(path_to_csvfile, "a", newline="") as f:
         theWriter = csv.writer(f)
