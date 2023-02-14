@@ -143,6 +143,7 @@ def cat_watcher(username):
                     toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
                     # Send email alert of cat leaving the litterbox
                     # email_alert(depart_timestamp_readable, toilet_duration)
+                    logger.info("Recording data...")
                     _record_data_in_csv(
                         username,
                         entry_timestamp_epoch,
