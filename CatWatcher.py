@@ -1,6 +1,28 @@
+"""
+A real-time object detection program that uses a live camera feed to monitor a litter box for a cat. 
+The program record the cat's entry and departure times whenever he uses the litterbox in a CSV file.
+It will also send email notifications to the user, if _email_alert() function is uncommented inside the the cat_watcher() function.
+
+Dependencies:
+- jetson.inference
+- jetson.utils
+
+Functions:
+- _email_alert: Sends notifications to the user whenever the cat enters or leaves the camera's field of view.
+- _record_data_in_csv: Records the time data of the cat's presence in a CSV file.
+- cat_watcher: Monitors the litter box for the cat and sends notifications and records time data.
+
+Usage:
+To use the module, call the `cat_watcher` function with a username as an argument. The function will continuously monitor the camera until it is stopped manually. 
+
+The function `_email_alert` is called by `cat_watcher` and should not be called directly. 
+Similarly, `_record_data_in_csv` is also called by `cat_watcher` and should not be called directly.
+
+Example:
+>>> cat_watcher("username")
+"""
+
 #!/usr/bin/python3
-# real-time object detection program from a live camera feed
-# copied code from <Hello AI World NVDIA JETSON>
 
 import jetson.inference
 import jetson.utils
@@ -23,16 +45,21 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def email_alert(time, duration):
+def _email_alert(time, duration):
     """
     Send notifications to the user whenever the cat enters or leaves the camera sight.
     Currently it's not secure as I have hardcoded password in my code and I have to lower gmail security level to make this work.
     An optimation is needed or notification should be sent using a different method.
     """
+    from dotenv import load_dotenv
     port = 465
     context = ssl.create_default_context()
-    sender_email = "emma.lijing0723@gmail.com"
-    receiver_email = "regent.rosinski@gmail.com"
+
+    # Load key-value pairs from .env file into environment variables
+    load_dotenv()
+    sender_email = os.getenv("SENDER_EMAIL")
+    receiver_email = os.getenv("RECEIVER_EMAIL")
+    sender_email_password = os.getenv("SENDER_EMAIL_PASSWORD")
 
     if duration == 0:
         message = f"""\
@@ -53,7 +80,7 @@ def email_alert(time, duration):
     # create a secure connection with Gmail's SMTP server
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         try:
-            server.login(sender_email, "Jingdong1106!")
+            server.login(sender_email, sender_email_password)
             server.sendmail(sender_email, receiver_email, message)
         except smtplib.SMTPAuthenticationError:
             logger.error("Email not working due to authentification error.")
@@ -78,9 +105,10 @@ def _record_data_in_csv(
     entry_timestamp_readable = datetime.fromtimestamp(entry_timestamp_epoch).strftime(
         "%Y%m%d_%H:%M:%S"
     )
-    # Name of the csv file is the combination of the username and the
+    # Name of the csv file is the combination of the username and the entry time
+    local_user = os.getenv("USER")
     path_to_csvfile = (
-        f"/home/emma_dev22/cat_watcher_output/{username}{entry_timestamp_readable}"
+        f"/home/{local_user}/cat_watcher_output/{username}{entry_timestamp_readable}"
     )
     logger.info(f"The path of the csv file is {path_to_csvfile}")
     # Open or create the csv file
@@ -142,7 +170,7 @@ def cat_watcher(username):
                     # Get the amount of time that cat used the litterbox
                     toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
                     # Send email alert of cat leaving the litterbox
-                    # email_alert(depart_timestamp_readable, toilet_duration)
+                    # _email_alert(depart_timestamp_readable, toilet_duration)
                     logger.info("Recording data...")
                     _record_data_in_csv(
                         username,
@@ -157,7 +185,7 @@ def cat_watcher(username):
             if entry_timestamp_epoch == None:
                 entry_timestamp_epoch = time.time()
                 # Send email alert of cat showing up at litterbox
-                # email_alert(entry_timestamp_readable, 0)
+                # _email_alert(entry_timestamp_readable, 0)
             # cat has showed up earlier
             else:
                 if -1 < cat_absent_duration_second <= MAX_ABSENT_TIME:
