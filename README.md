@@ -1,25 +1,18 @@
-# CatWatcher Program Edited on 20230210-Testing editing v2
+# CatWatcher Program Edited on 20230
 ## Setup for the Program  
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
 ## What does this program do?
-The program uses image recognition to monitor a cat's litterbox and logs the data whenever the cat uses the litterbox. To be more specific:
+The program uses object detection technology to monitor a cat's litterbox and logs the data whenever the cat uses the litterbox. To be more specific:
 - A camera is constantly running in front of a litterbox.
 - Upon a cat being caught on camera, an email notification is sent to user (optional, not activated now).
 - Upon cat leaving the sight of camera, an email notification is sent to user (optional, not activated now).
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
 ## How to use this program?
-### Make a directory that the camera output data to by running the command: 
-```
-./make_directory.sh
-```
-This will create a directory `/home/$USER/cat_watcher_output`. 
-
-OR,
-
-It might be easier to just make the directory without a bash script. Simply use `mkdir /home/$USER/cat_watcher_output`. 
+### Make a directory that the camera outputs data to by running the command: 
+`mkdir /home/$USER/cat_watcher_output`
 
 ### Make a `.env` file storing your personal info (This will need to be taken out into the main documentation, perhaps with more info) 
 This is not required at the moment as I didn't activate the sending email notification function in my code.  
@@ -59,3 +52,4 @@ date,entry,depart,duration
 ## Future development
 - Make this program a service, and have a default username if none is supplied.
 - Fix the headless program executing issue
+- Develop my own Object Detection program that does not depend on the `jetson-inference` library.
