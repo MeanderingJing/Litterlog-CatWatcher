@@ -1,4 +1,4 @@
-# CatWatcher Program Edited on 20230210-Testing editing 
+# CatWatcher Program Edited on 20230210-Testing editing v2
 ## Setup for the Program  
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
