@@ -31,7 +31,8 @@ I should probably use a virtual environment for this project as I am installing 
 pip3 install dotenv
 ```
 
-To run the program, go to the directory where this repo is, and execute the command:
+### Run the program
+Go to the directory where this repo is, and execute the command:
 ``` 
 python3 CatWatcher.py
 ```
