@@ -31,7 +31,7 @@ import ssl
 import csv
 import logging
 import os
-from dotenv import load_dotenv
+
 import jetson.inference
 import jetson.utils
 
@@ -51,10 +51,9 @@ def _email_alert(recorded_time, duration):
     Currently it's not secure as I have hardcoded password in my code and I have to lower gmail security level to make this work.
     An optimation is needed or notification should be sent using a different method.
     """
-    
+    from dotenv import load_dotenv
     port = 465
     context = ssl.create_default_context()
-
     # Load key-value pairs from .env file into environment variables
     load_dotenv()
     sender_email = os.getenv("SENDER_EMAIL")
@@ -193,53 +192,10 @@ def cat_watcher(user_name: str) -> None:
                     # Reset
                     entry_timestamp_epoch = None
                     cat_absent_duration_second = 0
-
-
-        # If cat is absent for more than max_absent_time(15) seconds, the program determines that the cat has left the litter box
-        # if cat_is_here is False:
-            # if entry_timestamp_epoch is not None:
-            #     if cat_absent_duration_second < max_absent_time:
-            #         cat_absent_duration_second += 1
-            #         logger.info(
-            #             "Emma, your cat has not been seen in the litterbox for %d seconds", cat_absent_duration_second
-            #         )
-            #     else:
-            #         # Record the time when the cat left the litterbox
-            #         depart_timestamp_epoch = time.time() - max_absent_time
-            #         # Get the amount of time that cat used the litterbox
-            #         toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
-            #         # Send email alert of cat leaving the litterbox
-            #         # _email_alert(depart_timestamp_readable, toilet_duration)
-            #         logger.info("Recording data...")
-            #         _record_data_in_csv(
-            #             user_name,
-            #             entry_timestamp_epoch,
-            #             depart_timestamp_epoch,
-            #             toilet_duration,
-            #         )
-            #         # Recall the function itself
-            #         cat_watcher(user_name)
-        #else:
-            # if entry_timestamp_epoch is None:
-            #     # Record the time when cat first shows up
-            #     entry_timestamp_epoch = time.time()
-            #     # Send email alert of cat showing up at litterbox
-            #     # _email_alert(entry_timestamp_readable, 0)
-            # else:
-            #     # cat has showed up earlier
-            #     if -1 < cat_absent_duration_second <= max_absent_time:
-            #         # Set cat_absent_duration_second to 0 if cat shows up again within max_absent_time secs.
-            #         cat_absent_duration_second = 0
-            #     else:
-            #         logger.error(
-            #             "The cat's absence time has an invalid value of %d seconds.", cat_absent_duration_second
-            #         )
         time.sleep(1)
 
 
 username = input("Enter a name for your user account: ")
-# login_time will be used to create the name of the csv file that will be generated
-# login_time = datetime.now().strftime("%Y%m%d_%H:%M:%S")
 
 # create a detectnet object instance that loads the 91-class SSD-Mobilenet-v2 model
 # model string and threshold value can be different
@@ -251,4 +207,4 @@ camera = jetson.utils.videoSource("csi://0")
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")
 
-cat_watcher(username)  # call the above function
+cat_watcher(username)  
