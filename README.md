@@ -3,6 +3,8 @@
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 ![LitterLog Hardware](https://github.com/emma-jinger/Litterlog-CatWatcher/blob/main/LitterLog_hardware.jpg)
+<img src="https://github.com/emma-jinger/Litterlog-CatWatcher/blob/main/LitterLog_hardware.jpg" alt="LitterLog Hardware" width="300" height="200">
+
 
 ## What does this program do?
 The program uses object detection technology to monitor a cat's litterbox and logs the data whenever the cat uses the litterbox. To be more specific:
