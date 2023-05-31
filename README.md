@@ -28,7 +28,7 @@ I should probably use a virtual environment for this project as I am installing 
 pip3 install dotenv
 ```
 
-Currently, to run the program, go to the directory where this repo is, and execute the command:
+To run the program, go to the directory where this repo is, and execute the command:
 ``` 
 python3 CatWatcher.py
 ```
@@ -40,7 +40,7 @@ date,entry,depart,duration
 2023-01-13,1673672546.8753567,1673672549.9890501,3.1136934757232666
 ```
 - `date` is a `datetime.date()` object; `entry`, `depart`, and `duration` are `float`.
-- The data is going to be loaded to a Postgres database. Before being loaded, `entry` and `depart` should be transformed to `datetime.datetime()` data type.
+- The data is going to be loaded to a Postgres database. Before being loaded, `entry` and `depart` will be transformed to `datetime.datetime()` data type.
 
 
 ## Possible Issues
