@@ -32,7 +32,7 @@ To run the program, go to the directory where this repo is, and execute the comm
 ``` 
 python3 CatWatcher.py
 ```
-### Output CSV File
+## Output CSV File
 ***Note: Currently, each time entry is recorded in its own CSV file.*** <br>
 The content of a sample file is shown as follows:
 ```
