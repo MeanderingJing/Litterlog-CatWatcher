@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-A real-time object detection program that uses a live camera feed to monitor a litter box for a cat.....
+A real-time object detection program that uses a live camera feed to monitor a litter box for a cat.
 The program records the cat's entry and departure times whenever he uses the litterbox in a CSV file.
 It will also send email notifications to the user, if _email_alert() function is uncommented inside the the cat_watcher() function.
 
@@ -31,7 +31,6 @@ import ssl
 import csv
 import logging
 import os
-from dotenv import load_dotenv
 import jetson.inference
 import jetson.utils
 
