@@ -31,6 +31,7 @@ import ssl
 import csv
 import logging
 import os
+from dotenv import load_dotenv
 import jetson.inference
 import jetson.utils
 
@@ -53,7 +54,6 @@ def _email_alert(recorded_time, duration):
     from dotenv import load_dotenv
     port = 465
     context = ssl.create_default_context()
-
     # Load key-value pairs from .env file into environment variables
     load_dotenv()
     sender_email = os.getenv("SENDER_EMAIL")
@@ -207,4 +207,4 @@ camera = jetson.utils.videoSource("csi://0")
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")
 
-cat_watcher(username)
+cat_watcher(username)  # call the above function
