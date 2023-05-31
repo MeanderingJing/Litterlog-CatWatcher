@@ -20,9 +20,9 @@ The program uses object detection technology to monitor a cat's litterbox and lo
 ### Make a `.env` file storing your personal info 
 This is not required at the moment as I didn't activate the sending email notification function in my code.  
 ```
-SENDER_EMAIL = "type_in_your_sender_email"
-RECEIVER_EMAIL = "type_in_your_receiver_email"
-SENDER_EMAIL_PW = "type_in_password" 
+SENDER_EMAIL = type_in_your_sender_email
+RECEIVER_EMAIL = type_in_your_receiver_email
+SENDER_EMAIL_PW = type_in_password
 ```
 ### Install dotenv package 
 This is not required at the moment as I didn't activate the sending email notification function in my code.
@@ -50,6 +50,9 @@ date,entry,depart,duration
 - The camera/machine learning program can not always recognize the cat, depending on how the cat positions himself in the litterbox. This leads to missing data on the cat's bathroom behavior.
 - The Nano device crashes/dies for unknown reasons. It is possibly related to limited memory and processing power of the Nano device.
 ## Future development
-- Make this program a service, and have a default username if none is supplied.
-- Fix the headless program executing issue
 - Develop my own Object Detection program that does not depend on the `jetson-inference` library.
+- Fix the program executing issue on headless mode
+- Make this repo into a Python package, which contains the python module as well as requirements and documentation. 
+- Make this program a service, and have a default username if none is supplied.
+
+
