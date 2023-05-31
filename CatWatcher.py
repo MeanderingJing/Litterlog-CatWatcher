@@ -1,6 +1,8 @@
+#!/usr/bin/python3
+
 """
 A real-time object detection program that uses a live camera feed to monitor a litter box for a cat. 
-The program record the cat's entry and departure times whenever he uses the litterbox in a CSV file.
+The program records the cat's entry and departure times whenever he uses the litterbox in a CSV file.
 It will also send email notifications to the user, if _email_alert() function is uncommented inside the the cat_watcher() function.
 
 Dependencies:
@@ -8,9 +10,9 @@ Dependencies:
 - jetson.utils
 
 Functions:
+- cat_watcher: Monitors the litter box for the cat and sends notifications and records time data.
 - _email_alert: Sends notifications to the user whenever the cat enters or leaves the camera's field of view.
 - _record_data_in_csv: Records the time data of the cat's presence in a CSV file.
-- cat_watcher: Monitors the litter box for the cat and sends notifications and records time data.
 
 Usage:
 To use the module, call the `cat_watcher` function with a username as an argument. The function will continuously monitor the camera until it is stopped manually. 
@@ -22,18 +24,16 @@ Example:
 >>> cat_watcher("username")
 """
 
-#!/usr/bin/python3
-
-import jetson.inference
-import jetson.utils
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 import time
-import smtplib, ssl
+import smtplib
+import ssl
 import csv
-from pathlib import Path
 import logging
 import os
-import uuid
+from dotenv import load_dotenv
+import jetson.inference
+import jetson.utils
 
 
 logger = logging.getLogger(__name__)
@@ -45,13 +45,13 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def _email_alert(time, duration):
+def _email_alert(recorded_time, duration):
     """
     Send notifications to the user whenever the cat enters or leaves the camera sight.
     Currently it's not secure as I have hardcoded password in my code and I have to lower gmail security level to make this work.
     An optimation is needed or notification should be sent using a different method.
     """
-    from dotenv import load_dotenv
+    
     port = 465
     context = ssl.create_default_context()
 
@@ -66,7 +66,7 @@ def _email_alert(time, duration):
 		Subject: Cat-LitterBox Alert
 
 
-		Hey you! It's {time} now.
+		Hey you! It's {recorded_time} now.
 		Your cat is in the litterbox!"""
     else:
         message = f"""\
@@ -74,7 +74,7 @@ def _email_alert(time, duration):
 
 
 		Hey again!
-		Your cat left the litterbox at {time}.
+		Your cat left the litterbox at {recorded_time}.
 		He used the toilet for {duration}."""
 
     # create a secure connection with Gmail's SMTP server
@@ -89,14 +89,15 @@ def _email_alert(time, duration):
 
 
 def _record_data_in_csv(
-    username,
-    entry_timestamp_epoch,
-    depart_timestamp_epoch,
-    toilet_duration,
+    user_name: str,
+    entry_timestamp_epoch: float,
+    depart_timestamp_epoch: float,
+    toilet_duration: float,
 ):
     """
-    Record time data to csv file (the only one)
-    :param username: the username entered by the user
+    Record time data to the csv file
+
+    :param user_name: the user name entered by the user
     :param entry_timestamp_readable: the time when the cat enters the litterbox
     :param depart_timestamp_readable: the time when the cat departs the litterbox
     :param toilet_duration: the duration of the cat at the litterbox
@@ -108,9 +109,9 @@ def _record_data_in_csv(
     # Name of the csv file is the combination of the username and the entry time
     local_user = os.getenv("USER")
     path_to_csvfile = (
-        f"/home/{local_user}/cat_watcher_output/{username}{entry_timestamp_readable}"
+        f"/home/{local_user}/cat_watcher_output/{user_name}{entry_timestamp_readable}"
     )
-    logger.info(f"The path of the csv file is {path_to_csvfile}")
+    logger.info("The path of the csv file is %s", path_to_csvfile)
     # Open or create the csv file
     with open(path_to_csvfile, "a", newline="") as f:
         theWriter = csv.writer(f)
@@ -127,22 +128,20 @@ def _record_data_in_csv(
         )
 
 
-def cat_watcher(username):
+def cat_watcher(user_name: str) -> None:
     """
-    A camera is constantly monitoring at the litterbox to see if the cat shows up.
-    Notifications will be sent to the user whenever the cat shows up or leaves the litterbox.
-    Data of the times when cat shows up and leaves the litterbox is recorded in a csv file.
+    A continous monitoring system is enabled by using a camera to detect the presence or absence of a cat in a litterbox.
+    It sends notifications to the user when the cat shows up or leaves the litterbox and records the timestamps in a CSV file.
+
+    :param user_name: a string representing the name for the user account.
     """
-    MAX_ABSENT_TIME = 15
+    max_absent_time = 15
     cat_absent_duration_second = 0
     entry_timestamp_epoch = None
 
-    # while display.IsStreaming():
     while True:
         cat_is_here = False
         # Capture the next video frame from the camera
-        # Camera.Capture() will wait until the next frame has been sent from the camera and loaded into GPU memory
-        # The returned image will be a jetson.utils.cudaImage object that contains atributes like width, height, and pixel format
         img = camera.Capture()
         # Process the image with net.Detect() function. It returns a list of detections(detecting Objects)
         detections = net.Detect(img)
@@ -150,51 +149,91 @@ def cat_watcher(username):
         display.Render(img)
         display.SetStatus(f"Object Detection | Network {net.GetNetworkFPS()} FPS")
 
-        # 20230209: Check if a cat shows up in front of camera
         for detection in detections:
             if net.GetClassDesc(detection.ClassID) == "cat":
                 logger.info("Detected a cat!")
                 cat_is_here = True
-
-        # If cat is absent for more than MAX_ABSENT_TIME(15) seconds, the program determines that the cat has left the litter box
-        if cat_is_here is False:
-            if entry_timestamp_epoch != None:
-                if cat_absent_duration_second < MAX_ABSENT_TIME:
+                break
+        
+        if cat_is_here:
+            if entry_timestamp_epoch is None:
+                # cat first shows up
+                entry_timestamp_epoch = time.time()
+                # Send email alert of cat showing up at litterbox
+                # _email_alert(entry_timestamp_readable, 0)
+            else:
+                # cat has showed up earlier
+                if -1 < cat_absent_duration_second <= max_absent_time:
+                    # Set cat_absent_duration_second to 0 if cat shows up again within 15 secs.
+                    cat_absent_duration_second = 0
+                else:
+                    logger.error(
+                        "The cat's absence time has an invalid value of %d seconds.", cat_absent_duration_second
+                    )
+        else:
+            if entry_timestamp_epoch is not None:
+                if cat_absent_duration_second < max_absent_time:
                     cat_absent_duration_second += 1
                     logger.info(
-                        f"Emma, your cat has not been seen in the litterbox for {cat_absent_duration_second} seconds."
+                        "Emma, your cat has not been seen in the litterbox for %d seconds", cat_absent_duration_second
                     )
                 else:
-                    # Record the time when the cat left the litterbox
-                    depart_timestamp_epoch = time.time() - MAX_ABSENT_TIME
-                    # Get the amount of time that cat used the litterbox
+                    # If cat is absent for more than 15 seconds, the program determines that the cat has left the litter box
+                    depart_timestamp_epoch = time.time() - max_absent_time
                     toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
                     # Send email alert of cat leaving the litterbox
                     # _email_alert(depart_timestamp_readable, toilet_duration)
                     logger.info("Recording data...")
                     _record_data_in_csv(
-                        username,
+                        user_name,
                         entry_timestamp_epoch,
                         depart_timestamp_epoch,
                         toilet_duration,
                     )
-                    # Recall the function itself
-                    cat_watcher(username)
-        else:
-            # Record the time when cat first shows up
-            if entry_timestamp_epoch == None:
-                entry_timestamp_epoch = time.time()
-                # Send email alert of cat showing up at litterbox
-                # _email_alert(entry_timestamp_readable, 0)
-            # cat has showed up earlier
-            else:
-                if -1 < cat_absent_duration_second <= MAX_ABSENT_TIME:
-                    # Set cat_absent_duration_second to 0 if cat shows up again within MAX_ABSENT_TIME secs.
+                    # Reset
+                    entry_timestamp_epoch = None
                     cat_absent_duration_second = 0
-                else:
-                    logger.error(
-                        f"The cat's absence time has an invalid value of {cat_absent_duration_second} seconds."
-                    )
+
+
+        # If cat is absent for more than max_absent_time(15) seconds, the program determines that the cat has left the litter box
+        # if cat_is_here is False:
+            # if entry_timestamp_epoch is not None:
+            #     if cat_absent_duration_second < max_absent_time:
+            #         cat_absent_duration_second += 1
+            #         logger.info(
+            #             "Emma, your cat has not been seen in the litterbox for %d seconds", cat_absent_duration_second
+            #         )
+            #     else:
+            #         # Record the time when the cat left the litterbox
+            #         depart_timestamp_epoch = time.time() - max_absent_time
+            #         # Get the amount of time that cat used the litterbox
+            #         toilet_duration = depart_timestamp_epoch - entry_timestamp_epoch
+            #         # Send email alert of cat leaving the litterbox
+            #         # _email_alert(depart_timestamp_readable, toilet_duration)
+            #         logger.info("Recording data...")
+            #         _record_data_in_csv(
+            #             user_name,
+            #             entry_timestamp_epoch,
+            #             depart_timestamp_epoch,
+            #             toilet_duration,
+            #         )
+            #         # Recall the function itself
+            #         cat_watcher(user_name)
+        #else:
+            # if entry_timestamp_epoch is None:
+            #     # Record the time when cat first shows up
+            #     entry_timestamp_epoch = time.time()
+            #     # Send email alert of cat showing up at litterbox
+            #     # _email_alert(entry_timestamp_readable, 0)
+            # else:
+            #     # cat has showed up earlier
+            #     if -1 < cat_absent_duration_second <= max_absent_time:
+            #         # Set cat_absent_duration_second to 0 if cat shows up again within max_absent_time secs.
+            #         cat_absent_duration_second = 0
+            #     else:
+            #         logger.error(
+            #             "The cat's absence time has an invalid value of %d seconds.", cat_absent_duration_second
+            #         )
         time.sleep(1)
 
 
