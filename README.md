@@ -31,15 +31,14 @@ sudo ldconfig
 `mkdir /home/$USER/cat_watcher_output`
 
 ### Make a `.env` file storing your personal info 
-This is not required at the moment as I didn't activate the sending email notification function in my code.  
+*This is not required at the moment as I didn't activate the sending email notification function in my code.*  
 ```
 SENDER_EMAIL = type_in_your_sender_email
 RECEIVER_EMAIL = type_in_your_receiver_email
 SENDER_EMAIL_PW = type_in_password
 ```
 ### Install dotenv package 
-This is not required at the moment as I didn't activate the sending email notification function in my code.
-I should probably use a virtual environment for this project as I am installing python package 
+*This is not required at the moment as I didn't activate the sending email notification function in my code.* 
 ```
 pip3 install dotenv
 ```
