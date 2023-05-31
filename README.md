@@ -27,7 +27,7 @@ make -j$(nproc)
 sudo make install
 sudo ldconfig
 ```
-### Make a directory that the camera outputs data to by running the command: 
+### Make a directory that the camera outputs data
 `mkdir /home/$USER/cat_watcher_output`
 
 ### Make a `.env` file storing your personal info 
