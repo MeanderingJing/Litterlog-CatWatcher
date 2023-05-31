@@ -1,4 +1,4 @@
-# CatWatcher Program Edited on 20230530-editing
+# CatWatcher Program Edited on 20230531
 ## Setup for the Program  
 **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
@@ -14,6 +14,19 @@ The program uses object detection technology to monitor a cat's litterbox and lo
 - Output CSV files recording the times when a cat enters and exits the litterbox.
 
 ## How to use this program?
+### Clone `jetson-inference` and build it from source
+```
+sudo apt-get update
+sudo apt-get install git cmake libpython3-dev python3-numpy
+git clone --recursive https://github.com/dusty-nv/jetson-inference
+cd jetson-inference
+mkdir build
+cd build
+cmake ../
+make -j$(nproc)
+sudo make install
+sudo ldconfig
+```
 ### Make a directory that the camera outputs data to by running the command: 
 `mkdir /home/$USER/cat_watcher_output`
 
