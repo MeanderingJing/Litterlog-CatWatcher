@@ -4,7 +4,7 @@
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
 <div align="center">
-    <img src="https://github.com/emma-jinger/Litterlog-CatWatcher/blob/main/LitterLog_hardware.jpg" alt="LitterLog Hardware" width="600" height="600">
+    <img src="https://github.com/emma-jinger/Litterlog-CatWatcher/blob/main/LitterLog_Hardware.jpg" alt="LitterLog Hardware" width="600" height="550">
 </div>
 
 
