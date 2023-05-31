@@ -1,10 +1,10 @@
 # CatWatcher Program Edited on 20230530-editing
 ## Setup for the Program  
-**Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
+    **Device used**: [The NVIDIA® Jetson Nano™ Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write)<br>
 **Library the Program Depends on**: [jetson-inference library](https://github.com/dusty-nv/jetson-inference)
 
 <div align="center">
-    <img src="https://github.com/emma-jinger/Litterlog-CatWatcher/blob/main/LitterLog_hardware.jpg" alt="LitterLog Hardware" width="500" height="500">
+    <img src="https://github.com/emma-jinger/Litterlog-CatWatcher/blob/main/LitterLog_hardware.jpg" alt="LitterLog Hardware" width="600" height="600">
 </div>
 
 
