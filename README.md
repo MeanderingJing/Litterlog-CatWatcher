@@ -14,7 +14,7 @@ The program uses object detection technology to monitor a cat's litterbox and lo
 ### Make a directory that the camera outputs data to by running the command: 
 `mkdir /home/$USER/cat_watcher_output`
 
-### Make a `.env` file storing your personal info (This will need to be taken out into the main documentation, perhaps with more info) 
+### Make a `.env` file storing your personal info 
 This is not required at the moment as I didn't activate the sending email notification function in my code.  
 ```
 SENDER_EMAIL = "type_in_your_sender_email"
@@ -32,9 +32,6 @@ Currently, to run the program, go to the directory where this repo is, and execu
 ``` 
 python3 CatWatcher.py
 ```
-
-### Diagram of this program
-![alt](https://github.com/emma-jinger/CatWatcher/blob/main/CatWatcherProgramDiagram.png "Program Diagram")
 ### Output CSV File
 ***Note: Currently, each time entry is recorded in its own CSV file.*** <br>
 The content of a sample file is shown as follows:
