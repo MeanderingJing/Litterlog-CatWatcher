@@ -47,8 +47,6 @@ logger.addHandler(handler)
 def _email_alert(recorded_time, duration):
     """
     Send notifications to the user whenever the cat enters or leaves the camera sight.
-    Currently it's not secure as I have hardcoded password in my code and I have to lower gmail security level to make this work.
-    An optimation is needed or notification should be sent using a different method.
     """
     from dotenv import load_dotenv
     port = 465
@@ -206,4 +204,4 @@ camera = jetson.utils.videoSource("csi://0")
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")
 
-cat_watcher(username)  # call the above function
+cat_watcher(username)  
