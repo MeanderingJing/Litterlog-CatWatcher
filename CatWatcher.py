@@ -49,6 +49,7 @@ def _email_alert(recorded_time, duration):
     Send notifications to the user whenever the cat enters or leaves the camera sight.
     """
     from dotenv import load_dotenv
+
     port = 465
     context = ssl.create_default_context()
     # Load key-value pairs from .env file into environment variables
@@ -150,7 +151,7 @@ def cat_watcher(user_name: str) -> None:
                 logger.info("Detected a cat!")
                 cat_is_here = True
                 break
-        
+
         if cat_is_here:
             if entry_timestamp_epoch is None:
                 # cat first shows up
@@ -164,14 +165,16 @@ def cat_watcher(user_name: str) -> None:
                     cat_absent_duration_second = 0
                 else:
                     logger.error(
-                        "The cat's absence time has an invalid value of %d seconds.", cat_absent_duration_second
+                        "The cat's absence time has an invalid value of %d seconds.",
+                        cat_absent_duration_second,
                     )
         else:
             if entry_timestamp_epoch is not None:
                 if cat_absent_duration_second < max_absent_time:
                     cat_absent_duration_second += 1
                     logger.info(
-                        "Emma, your cat has not been seen in the litterbox for %d seconds", cat_absent_duration_second
+                        "Emma, your cat has not been seen in the litterbox for %d seconds",
+                        cat_absent_duration_second,
                     )
                 else:
                     # If cat is absent for more than 15 seconds, the program determines that the cat has left the litter box
@@ -204,4 +207,4 @@ camera = jetson.utils.videoSource("csi://0")
 # create a video output interface with the videoOutput object and create a main loop that will run until the user exits(Display loop)
 display = jetson.utils.videoOutput("display://0")
 
-cat_watcher(username)  
+cat_watcher(username)
